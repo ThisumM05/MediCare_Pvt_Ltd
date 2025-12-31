@@ -1,0 +1,104 @@
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h3><i class="fas fa-user-md me-2"></i>MediCare Login</h3>
+                    <p class="mb-0">Access your healthcare portal</p>
+                </div>
+                <div class="card-body p-4">
+                    @if (!string.IsNullOrEmpty(ViewBag.Error))
+                    {
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i>@ViewBag.Error
+                        </div>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(ViewBag.Success))
+                    {
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i>@ViewBag.Success
+                        </div>
+                    }
+
+                    <form method="post" asp-action="Login">
+                        <div class="form-group mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>Email Address
+                            </label>
+                            <input type="email" class="form-control form-control-lg" id="email" name="email" required placeholder="Enter your email">
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Password
+                            </label>
+                            <input type="password" class="form-control form-control-lg" id="password" name="password" required placeholder="Enter your password">
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                            </button>
+                        </div>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <p class="mb-2">Don't have an account?</p>
+                        <a href="@Url.Action("Register", "Account")" class="btn btn-outline-primary">
+                            <i class="fas fa-user-plus me-2"></i>Create New Account
+                        </a>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <small class="text-muted">
+                            <i class="fas fa-shield-alt me-1"></i>
+                            Your data is secure with us
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-4">
+                    <div class="card text-center border-primary">
+                        <div class="card-body py-3">
+                            <i class="fas fa-user-shield fa-2x text-primary mb-2"></i>
+                            <h6>Admin</h6>
+                            <small class="text-muted">System Management</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card text-center border-success">
+                        <div class="card-body py-3">
+                            <i class="fas fa-user-md fa-2x text-success mb-2"></i>
+                            <h6>Doctor</h6>
+                            <small class="text-muted">Medical Professional</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card text-center border-info">
+                        <div class="card-body py-3">
+                            <i class="fas fa-user fa-2x text-info mb-2"></i>
+                            <h6>Patient</h6>
+                            <small class="text-muted">Healthcare Seeker</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+}

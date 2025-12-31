@@ -1,0 +1,187 @@
+@model medicare_pvt.Models.User
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-success text-white text-center py-4">
+                    <h3><i class="fas fa-user-plus me-2"></i>Create Account</h3>
+                    <p class="mb-0">Join MediCare Healthcare Portal</p>
+                </div>
+                <div class="card-body p-4">
+                    @if (!string.IsNullOrEmpty(ViewBag.Error))
+                    {
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i>@ViewBag.Error
+                        </div>
+                    }
+
+                    <form method="post" asp-action="Register">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Name" class="form-label">
+                                        <i class="fas fa-user me-2"></i>Full Name
+                                    </label>
+                                    <input asp-for="Name" class="form-control" placeholder="Enter your full name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Email" class="form-label">
+                                        <i class="fas fa-envelope me-2"></i>Email Address
+                                    </label>
+                                    <input asp-for="Email" class="form-control" placeholder="Enter your email" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="password" class="form-label">
+                                        <i class="fas fa-lock me-2"></i>Password
+                                    </label>
+                                    <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="confirmPassword" class="form-label">
+                                        <i class="fas fa-lock me-2"></i>Confirm Password
+                                    </label>
+                                    <input type="password" name="confirmPassword" class="form-control" placeholder="Confirm password" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="ContactNumber" class="form-label">
+                                        <i class="fas fa-phone me-2"></i>Phone Number
+                                    </label>
+                                    <input asp-for="ContactNumber" class="form-control" placeholder="Enter phone number">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="DateOfBirth" class="form-label">
+                                        <i class="fas fa-calendar me-2"></i>Date of Birth
+                                    </label>
+                                    <input asp-for="DateOfBirth" class="form-control" type="date">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Gender" class="form-label">
+                                        <i class="fas fa-venus-mars me-2"></i>Gender
+                                    </label>
+                                    <select asp-for="Gender" class="form-select">
+                                        <option value="">Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="BloodGroup" class="form-label">
+                                        <i class="fas fa-tint me-2"></i>Blood Group
+                                    </label>
+                                    <select asp-for="BloodGroup" class="form-select">
+                                        <option value="">Select Blood Group</option>
+                                        <option value="A+">A+</option>
+                                        <option value="A-">A-</option>
+                                        <option value="B+">B+</option>
+                                        <option value="B-">B-</option>
+                                        <option value="AB+">AB+</option>
+                                        <option value="AB-">AB-</option>
+                                        <option value="O+">O+</option>
+                                        <option value="O-">O-</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Address" class="form-label">
+                                <i class="fas fa-map-marker-alt me-2"></i>Address
+                            </label>
+                            <textarea asp-for="Address" class="form-control" rows="2" placeholder="Enter your address"></textarea>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label asp-for="Role" class="form-label">
+                                <i class="fas fa-user-tag me-2"></i>Register As
+                            </label>
+                            <select asp-for="Role" class="form-select" required>
+                                <option value="">Select Role</option>
+                                <option value="Patient">Patient</option>
+                                <option value="Doctor">Doctor</option>
+                            </select>
+                            <small class="form-text text-muted">
+                                Doctors require admin approval before accessing the system.
+                            </small>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="terms" required>
+                            <label class="form-check-label" for="terms">
+                                I agree to the <a href="#" class="text-primary">Terms and Conditions</a> and 
+                                <a href="#" class="text-primary">Privacy Policy</a>
+                            </label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-user-plus me-2"></i>Create Account
+                            </button>
+                        </div>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <p class="mb-0">Already have an account? 
+                            <a href="@Url.Action("Login", "Account")" class="text-primary">
+                                <i class="fas fa-sign-in-alt me-1"></i>Sign In
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        // Form validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const password = document.querySelector('input[name="password"]').value;
+            const confirmPassword = document.querySelector('input[name="confirmPassword"]').value;
+            
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('Passwords do not match!');
+                return false;
+            }
+            
+            if (password.length < 6) {
+                e.preventDefault();
+                alert('Password must be at least 6 characters long!');
+                return false;
+            }
+        });
+    </script>
+}

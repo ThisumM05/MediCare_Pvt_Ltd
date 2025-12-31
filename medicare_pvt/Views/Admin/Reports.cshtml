@@ -1,0 +1,272 @@
+@using medicare_pvt.Controllers
+@model ReportsViewModel
+@{
+    ViewData["Title"] = "Reports & Analytics";
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-3"><i class="fas fa-chart-bar"></i> Reports & Analytics</h2>
+            <p class="text-muted">View system performance and statistics</p>
+        </div>
+    </div>
+
+    <!-- Monthly Appointments Chart -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0"><i class="fas fa-calendar-alt"></i> Monthly Appointment Trends</h5>
+        </div>
+        <div class="card-body">
+            @if (Model.MonthlyAppointments.Any())
+            {
+                <canvas id="appointmentsChart" height="80"></canvas>
+            }
+            else
+            {
+                <p class="text-muted text-center py-4">No data available</p>
+            }
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <!-- Specialty Statistics -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-stethoscope"></i> Appointments by Specialty</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.SpecialtyStats.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Specialty</th>
+                                        <th>Appointments</th>
+                                        <th>Doctors</th>
+                                        <th>Avg per Doctor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var stat in Model.SpecialtyStats)
+                                    {
+                                        <tr>
+                                            <td><strong>@stat.Specialty</strong></td>
+                                            <td>@stat.AppointmentCount</td>
+                                            <td>@stat.DoctorCount</td>
+                                            <td>@((stat.AppointmentCount / (double)stat.DoctorCount).ToString("F1"))</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <canvas id="specialtyChart" height="200"></canvas>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center py-4">No specialty data available</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Revenue Statistics -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-dollar-sign"></i> Monthly Revenue</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.RevenueStats.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Month</th>
+                                        <th>Revenue (LKR)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var stat in Model.RevenueStats)
+                                    {
+                                        <tr>
+                                            <td><strong>@stat.MonthName</strong></td>
+                                            <td>@stat.Amount.ToString("N2")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-success">
+                                        <th>Total</th>
+                                        <th>@Model.RevenueStats.Sum(r => r.Amount).ToString("N2")</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <canvas id="revenueChart" height="200"></canvas>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center py-4">No revenue data available</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="card stat-card bg-primary text-white">
+                <div class="card-body">
+                    <h4 class="mb-0">@Model.MonthlyAppointments.Sum(m => m.Count)</h4>
+                    <p class="mb-0">Total Appointments</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card bg-success text-white">
+                <div class="card-body">
+                    <h4 class="mb-0">LKR @Model.RevenueStats.Sum(r => r.Amount).ToString("N0")</h4>
+                    <p class="mb-0">Total Revenue</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card bg-info text-white">
+                <div class="card-body">
+                    <h4 class="mb-0">@Model.SpecialtyStats.Count</h4>
+                    <p class="mb-0">Specialties</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card bg-warning text-white">
+                <div class="card-body">
+                    <h4 class="mb-0">LKR @(Model.RevenueStats.Any() ? (Model.RevenueStats.Sum(r => r.Amount) / Model.RevenueStats.Count).ToString("N0") : "0")</h4>
+                    <p class="mb-0">Avg Monthly Revenue</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Appointments Chart
+        @if (Model.MonthlyAppointments.Any())
+        {
+            <text>
+            const appointmentsCtx = document.getElementById('appointmentsChart').getContext('2d');
+            new Chart(appointmentsCtx, {
+                type: 'line',
+                data: {
+                    labels: [@Html.Raw(string.Join(",", Model.MonthlyAppointments.Select(m => $"'{m.MonthName}'")))],
+                    datasets: [{
+                        label: 'Appointments',
+                        data: [@string.Join(",", Model.MonthlyAppointments.Select(m => m.Count))],
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.1,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            </text>
+        }
+
+        // Specialty Chart
+        @if (Model.SpecialtyStats.Any())
+        {
+            <text>
+            const specialtyCtx = document.getElementById('specialtyChart').getContext('2d');
+            new Chart(specialtyCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: [@Html.Raw(string.Join(",", Model.SpecialtyStats.Select(s => $"'{s.Specialty}'")))],
+                    datasets: [{
+                        data: [@string.Join(",", Model.SpecialtyStats.Select(s => s.AppointmentCount))],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.8)',
+                            'rgba(54, 162, 235, 0.8)',
+                            'rgba(255, 206, 86, 0.8)',
+                            'rgba(75, 192, 192, 0.8)',
+                            'rgba(153, 102, 255, 0.8)',
+                            'rgba(255, 159, 64, 0.8)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+            </text>
+        }
+
+        // Revenue Chart
+        @if (Model.RevenueStats.Any())
+        {
+            <text>
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(revenueCtx, {
+                type: 'bar',
+                data: {
+                    labels: [@Html.Raw(string.Join(",", Model.RevenueStats.Select(r => $"'{r.MonthName}'")))],
+                    datasets: [{
+                        label: 'Revenue (LKR)',
+                        data: [@string.Join(",", Model.RevenueStats.Select(r => r.Amount))],
+                        backgroundColor: 'rgba(75, 192, 192, 0.8)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            </text>
+        }
+    </script>
+}
+
+<style>
+    .stat-card {
+        border: none;
+        border-radius: 10px;
+    }
+</style>

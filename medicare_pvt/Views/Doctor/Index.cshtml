@@ -1,0 +1,221 @@
+@model IEnumerable<medicare_pvt.Models.Doctor>
+
+@{
+    ViewData["Title"] = "Find Doctors - MediCare";
+}
+
+<div class="container mt-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="mb-2">
+                <i class="fas fa-user-md me-3 text-primary"></i>
+                Find Our Doctors
+            </h2>
+            <p class="text-muted">Discover qualified medical professionals for your healthcare needs</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            @if (User.IsInRole("Admin"))
+            {
+                <a class="btn btn-success" asp-action="Create">
+                    <i class="fas fa-plus me-2"></i>Add New Doctor
+                </a>
+            }
+        </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">
+                        <i class="fas fa-search me-2"></i>Search Doctors
+                    </label>
+                    <input type="text" name="search" class="form-control" 
+                           placeholder="Search by name, specialty, or qualifications" 
+                           value="@ViewBag.CurrentSearch">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">
+                        <i class="fas fa-filter me-2"></i>Specialty
+                    </label>
+                    <select name="specialty" class="form-select">
+                        <option value="">All Specialties</option>
+                        @foreach (var specialty in ViewBag.Specialties as List<string>)
+                        {
+                            <option value="@specialty" selected="@(specialty == ViewBag.CurrentSpecialty)">
+                                @specialty
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="fas fa-search me-2"></i>Search
+                    </button>
+                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                        <i class="fas fa-undo me-2"></i>Clear
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Doctors Grid -->
+    <div class="row g-4">
+        @if (!Model.Any())
+        {
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-user-md fa-5x text-muted mb-3"></i>
+                    <h4 class="text-muted">No doctors found</h4>
+                    <p class="text-muted">Try adjusting your search criteria or check back later.</p>
+                </div>
+            </div>
+        }
+        else
+        {
+            @foreach (var doctor in Model)
+            {
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100 shadow-sm border-0 doctor-card">
+                        <div class="card-body p-4">
+                            <div class="text-center mb-3">
+                                @if (!string.IsNullOrEmpty(doctor.ProfileImage))
+                                {
+                                    <img src="@doctor.ProfileImage" alt="@doctor.Name" 
+                                         class="rounded-circle mb-3" width="80" height="80">
+                                }
+                                else
+                                {
+                                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" 
+                                         style="width: 80px; height: 80px; font-size: 2rem;">
+                                        <i class="fas fa-user-md"></i>
+                                    </div>
+                                }
+                            </div>
+
+                            <h5 class="card-title text-center mb-2">Dr. @doctor.Name</h5>
+                            
+                            <div class="text-center mb-3">
+                                <span class="badge bg-primary fs-6 px-3 py-2">
+                                    <i class="fas fa-stethoscope me-1"></i>
+                                    @doctor.Specialty
+                                </span>
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(doctor.Qualifications))
+                            {
+                                <p class="text-muted small text-center mb-3">
+                                    <i class="fas fa-graduation-cap me-1"></i>
+                                    @doctor.Qualifications
+                                </p>
+                            }
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-muted small">
+                                        <i class="fas fa-briefcase me-1"></i>
+                                        Experience:
+                                    </span>
+                                    <span class="fw-bold">@doctor.ExperienceYears years</span>
+                                </div>
+
+                                @if (doctor.ConsultationFee > 0)
+                                {
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="text-muted small">
+                                            <i class="fas fa-rupee-sign me-1"></i>
+                                            Consultation Fee:
+                                        </span>
+                                        <span class="fw-bold text-success">₹@doctor.ConsultationFee</span>
+                                    </div>
+                                }
+
+                                @if (!string.IsNullOrEmpty(doctor.Location))
+                                {
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-muted small">
+                                            <i class="fas fa-map-marker-alt me-1"></i>
+                                            Location:
+                                        </span>
+                                        <span class="fw-bold">@doctor.Location</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-transparent border-0 pt-0">
+                            <div class="d-grid gap-2">
+                                <a href="@Url.Action("Profile", new { id = doctor.Id })" 
+                                   class="btn btn-outline-primary">
+                                    <i class="fas fa-user me-2"></i>View Profile
+                                </a>
+                                
+                                @if (User.IsInRole("Patient"))
+                                {
+                                    <a href="@Url.Action("Book", "Appointment", new { doctorId = doctor.Id })" 
+                                       class="btn btn-success">
+                                        <i class="fas fa-calendar-plus me-2"></i>Book Appointment
+                                    </a>
+                                }
+                                else if (!User.Identity.IsAuthenticated)
+                                {
+                                    <a href="@Url.Action("Register", "Account")" 
+                                       class="btn btn-success">
+                                        <i class="fas fa-user-plus me-2"></i>Register to Book
+                                    </a>
+                                }
+
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <div class="btn-group w-100" role="group">
+                                        <a href="@Url.Action("Edit", new { id = doctor.Id })" 
+                                           class="btn btn-sm btn-warning">
+                                            <i class="fas fa-edit me-1"></i>Edit
+                                        </a>
+                                        <a href="@Url.Action("Delete", new { id = doctor.Id })" 
+                                           class="btn btn-sm btn-danger"
+                                           onclick="return confirm('Are you sure you want to deactivate this doctor?');">
+                                            <i class="fas fa-trash me-1"></i>Delete
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <!-- Pagination (if needed) -->
+    @if (Model.Count() > 0)
+    {
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <p class="text-muted">
+                    Showing @Model.Count() doctors
+                </p>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <style>
+        .doctor-card {
+            transition: all 0.3s ease;
+        }
+        
+        .doctor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+        }
+        
+        .badge {
+            font-weight: 500;
+        }
+    </style>
+}

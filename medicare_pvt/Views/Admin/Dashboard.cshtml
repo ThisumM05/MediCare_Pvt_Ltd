@@ -1,0 +1,286 @@
+@model medicare_pvt.Controllers.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container-fluid mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="fas fa-tachometer-alt me-2 text-primary"></i>
+                        Admin Dashboard
+                    </h2>
+                    <p class="text-muted">Welcome back, Administrator</p>
+                </div>
+                <div>
+                    <span class="badge bg-success fs-6">
+                        <i class="fas fa-calendar me-1"></i>
+                        @DateTime.Now.ToString("MMM dd, yyyy")
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-0">@Model.TotalDoctors</h3>
+                            <p class="mb-0">Total Doctors</p>
+                        </div>
+                        <div class="fs-1 opacity-75">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-primary bg-opacity-25">
+                    <small><i class="fas fa-users me-1"></i>Active medical professionals</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-0">@Model.TotalPatients</h3>
+                            <p class="mb-0">Total Patients</p>
+                        </div>
+                        <div class="fs-1 opacity-75">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-success bg-opacity-25">
+                    <small><i class="fas fa-user-plus me-1"></i>Registered patients</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-0">@Model.TodayAppointments</h3>
+                            <p class="mb-0">Today's Appointments</p>
+                        </div>
+                        <div class="fs-1 opacity-75">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-info bg-opacity-25">
+                    <small><i class="fas fa-clock me-1"></i>Scheduled for today</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-warning text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-0">₹@Model.MonthlyRevenue.ToString("N0")</h3>
+                            <p class="mb-0">Monthly Revenue</p>
+                        </div>
+                        <div class="fs-1 opacity-75">
+                            <i class="fas fa-rupee-sign"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-warning bg-opacity-25">
+                    <small><i class="fas fa-chart-line me-1"></i>This month's earnings</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointment Status Overview -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="display-6 text-warning mb-2">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h4>@Model.PendingAppointments</h4>
+                    <p class="text-muted mb-0">Pending Appointments</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="display-6 text-success mb-2">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h4>@Model.CompletedAppointments</h4>
+                    <p class="text-muted mb-0">Completed Appointments</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="display-6 text-primary mb-2">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h4>@Model.TotalAppointments</h4>
+                    <p class="text-muted mb-0">Total Appointments</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Appointments -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history me-2"></i>
+                        Recent Appointments
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentAppointments.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Doctor</th>
+                                        <th>Date & Time</th>
+                                        <th>Status</th>
+                                        <th>Fee</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var appointment in Model.RecentAppointments)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <i class="fas fa-user me-2 text-muted"></i>
+                                                @appointment.Patient?.Name
+                                            </td>
+                                            <td>
+                                                <i class="fas fa-user-md me-2 text-primary"></i>
+                                                Dr. @appointment.Doctor?.Name
+                                            </td>
+                                            <td>
+                                                <i class="fas fa-calendar me-2 text-muted"></i>
+                                                @appointment.AppointmentDate.ToString("MMM dd, yyyy")
+                                                @appointment.AppointmentTime.ToString(@"hh\:mm")
+                                            </td>
+                                            <td>
+                                                @if (appointment.Status == "Pending")
+                                                {
+                                                    <span class="badge bg-warning">
+                                                        <i class="fas fa-clock me-1"></i>Pending
+                                                    </span>
+                                                }
+                                                else if (appointment.Status == "Confirmed")
+                                                {
+                                                    <span class="badge bg-info">
+                                                        <i class="fas fa-check me-1"></i>Confirmed
+                                                    </span>
+                                                }
+                                                else if (appointment.Status == "Completed")
+                                                {
+                                                    <span class="badge bg-success">
+                                                        <i class="fas fa-check-circle me-1"></i>Completed
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-danger">
+                                                        <i class="fas fa-times me-1"></i>@appointment.Status
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (appointment.Fee.HasValue)
+                                                {
+                                                    <span class="fw-bold text-success">₹@appointment.Fee.Value.ToString("N0")</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No recent appointments found.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>
+                        Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <a href="@Url.Action("Index", "Doctor")" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-user-md fa-2x mb-2 d-block"></i>
+                                Manage Doctors
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="@Url.Action("Index", "Patient")" class="btn btn-outline-success w-100">
+                                <i class="fas fa-users fa-2x mb-2 d-block"></i>
+                                Manage Patients
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="@Url.Action("Index", "Appointment")" class="btn btn-outline-info w-100">
+                                <i class="fas fa-calendar-alt fa-2x mb-2 d-block"></i>
+                                View Appointments
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="@Url.Action("Reports", "Admin")" class="btn btn-outline-warning w-100">
+                                <i class="fas fa-chart-bar fa-2x mb-2 d-block"></i>
+                                View Reports
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Auto-refresh dashboard every 5 minutes
+        setTimeout(function() {
+            location.reload();
+        }, 300000);
+    </script>
+}

@@ -1,0 +1,30 @@
+@model medicare_pvt.Models.Doctor
+
+@{
+    ViewData["Title"] = "Delete Doctor";
+}
+
+<div class="container mt-4">
+    <h2>Delete Doctor</h2>
+    <div class="alert alert-warning">
+        Are you sure you want to delete this doctor?
+    </div>
+    <dl class="row">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">@Model.Id</dd>
+
+        <dt class="col-sm-3">Name</dt>
+        <dd class="col-sm-9">@Model.Name</dd>
+
+        <dt class="col-sm-3">Specialty</dt>
+        <dd class="col-sm-9">@Model.Specialty</dd>
+
+        <dt class="col-sm-3">Availability</dt>
+        <dd class="col-sm-9">@Model.Availability</dd>
+    </dl>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a class="btn btn-secondary" asp-action="Index">Cancel</a>
+    </form>
+</div>

@@ -1,0 +1,83 @@
+@model List<medicare_pvt.Models.Feedback>
+@{
+    ViewData["Title"] = "My Feedback";
+}
+
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-2"><i class="fas fa-comments"></i> My Feedback</h2>
+                    <p class="text-muted">View and manage your doctor feedback</p>
+                </div>
+                @if (User.IsInRole("Patient"))
+                {
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Submit Feedback
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="row">
+            @foreach (var feedback in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="mb-1">Dr. @feedback.Doctor.Name</h5>
+                                    <p class="text-muted small mb-2">@feedback.Doctor.Specialty</p>
+                                    <div class="text-warning">
+                                        @for (int i = 0; i < feedback.Rating; i++)
+                                        {
+                                            <i class="fas fa-star"></i>
+                                        }
+                                        @for (int i = feedback.Rating; i < 5; i++)
+                                        {
+                                            <i class="far fa-star"></i>
+                                        }
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="badge bg-@(feedback.IsApproved ? "success" : "warning")">
+                                        @(feedback.IsApproved ? "Approved" : "Pending")
+                                    </span>
+                                </div>
+                            </div>
+                            @if (!string.IsNullOrEmpty(feedback.Title))
+                            {
+                                <h6 class="mb-2">@feedback.Title</h6>
+                            }
+                            <p class="mb-2">@feedback.Message</p>
+                            <small class="text-muted">
+                                <i class="fas fa-calendar"></i> @feedback.CreatedDate.ToString("MMM dd, yyyy")
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-comments fa-4x text-muted mb-3"></i>
+                <h4>No Feedback Yet</h4>
+                <p class="text-muted">You haven't submitted any feedback yet.</p>
+                @if (User.IsInRole("Patient"))
+                {
+                    <a asp-action="Create" class="btn btn-primary mt-3">
+                        <i class="fas fa-plus"></i> Submit Your First Feedback
+                    </a>
+                }
+            </div>
+        </div>
+    }
+</div>

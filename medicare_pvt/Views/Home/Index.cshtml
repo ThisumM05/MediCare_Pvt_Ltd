@@ -1,0 +1,221 @@
+﻿@{
+    ViewData["Title"] = "Home - MediCare Pvt Ltd";
+}
+
+<!-- Hero Section -->
+<section class="hero-section bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-3">
+                    <i class="fas fa-heartbeat me-3 text-danger"></i>
+                    MediCare Pvt Ltd
+                </h1>
+                <p class="lead mb-4">
+                    Your trusted healthcare partner in Sri Lanka. Access quality medical services with our
+                    advanced online appointment system.
+                </p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    <a href="@Url.Action("Register", "Account")" class="btn btn-light btn-lg px-4">
+                        <i class="fas fa-user-plus me-2"></i>Book Appointment
+                    </a>
+                    <a href="#services" class="btn btn-outline-light btn-lg px-4">
+                        <i class="fas fa-info-circle me-2"></i>Learn More
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="text-center">
+                    <i class="fas fa-hospital-alt" style="font-size: 15rem; opacity: 0.1;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- User Portals Section -->
+<section class="py-5" id="portals">
+    <div class="container">
+        <h2 class="text-center mb-5">
+            <i class="fas fa-door-open me-3 text-primary"></i>Access Your Portal
+        </h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 text-center border-0 shadow-sm portal-card">
+                    <div class="card-body p-4">
+                        <div class="icon-circle bg-primary text-white mb-3">
+                            <i class="fas fa-user-shield fa-2x"></i>
+                        </div>
+                        <h4 class="card-title">Admin Portal</h4>
+                        <p class="card-text">
+                            Manage doctors, patients, appointments, and system settings.
+                            Generate reports and oversee operations.
+                        </p>
+                        <a href="@Url.Action("Login", "Account")" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt me-2"></i>Admin Login
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center border-0 shadow-sm portal-card">
+                    <div class="card-body p-4">
+                        <div class="icon-circle bg-success text-white mb-3">
+                            <i class="fas fa-user-md fa-2x"></i>
+                        </div>
+                        <h4 class="card-title">Doctor Portal</h4>
+                        <p class="card-text">
+                            Manage your schedule, view appointments, update patient records,
+                            and provide consultations.
+                        </p>
+                        <a href="@Url.Action("Login", "Account")" class="btn btn-success">
+                            <i class="fas fa-stethoscope me-2"></i>Doctor Login
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center border-0 shadow-sm portal-card">
+                    <div class="card-body p-4">
+                        <div class="icon-circle bg-info text-white mb-3">
+                            <i class="fas fa-user fa-2x"></i>
+                        </div>
+                        <h4 class="card-title">Patient Portal</h4>
+                        <p class="card-text">
+                            Book appointments, view medical records, make payments,
+                            and communicate with your doctors.
+                        </p>
+                        <a href="@Url.Action("Login", "Account")" class="btn btn-info">
+                            <i class="fas fa-calendar-plus me-2"></i>Patient Login
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="py-5 bg-light" id="services">
+    <div class="container">
+        <h2 class="text-center mb-5">
+            <i class="fas fa-hospital me-3 text-primary"></i>Our Medical Services
+        </h2>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="service-item text-center">
+                    <div class="service-icon bg-primary text-white mb-3">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <h5>General Medicine</h5>
+                    <p>Comprehensive primary healthcare for all age groups</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="service-item text-center">
+                    <div class="service-icon bg-success text-white mb-3">
+                        <i class="fas fa-child"></i>
+                    </div>
+                    <h5>Pediatrics</h5>
+                    <p>Specialized healthcare for infants, children, and adolescents</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="service-item text-center">
+                    <div class="service-icon bg-danger text-white mb-3">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <h5>Cardiology</h5>
+                    <p>Expert care for heart and cardiovascular conditions</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="service-item text-center">
+                    <div class="service-icon bg-warning text-white mb-3">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h5>Dermatology</h5>
+                    <p>Treatment for skin, hair, and nail conditions</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">
+            <i class="fas fa-star me-3 text-primary"></i>Why Choose MediCare?
+        </h2>
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="feature-item d-flex">
+                    <div class="feature-icon me-3">
+                        <i class="fas fa-clock text-primary"></i>
+                    </div>
+                    <div>
+                        <h5>24/7 Online Booking</h5>
+                        <p>Book appointments anytime, anywhere with our easy-to-use online system.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="feature-item d-flex">
+                    <div class="feature-icon me-3">
+                        <i class="fas fa-shield-alt text-success"></i>
+                    </div>
+                    <div>
+                        <h5>Secure & Private</h5>
+                        <p>Your medical data is protected with industry-standard security measures.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="feature-item d-flex">
+                    <div class="feature-icon me-3">
+                        <i class="fas fa-credit-card text-info"></i>
+                    </div>
+                    <div>
+                        <h5>Easy Payments</h5>
+                        <p>Multiple payment options including online payments for your convenience.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="py-5 bg-dark text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <h3 class="mb-4">
+                    <i class="fas fa-phone me-3 text-primary"></i>Get In Touch
+                </h3>
+                <div class="contact-info">
+                    <p><i class="fas fa-map-marker-alt me-3"></i>123 Medical Center Road, Colombo 07, Sri Lanka</p>
+                    <p><i class="fas fa-phone me-3"></i>+94 11 234 5678</p>
+                    <p><i class="fas fa-envelope me-3"></i>info@medicare.lk</p>
+                    <p><i class="fas fa-clock me-3"></i>24/7 Emergency Services</p>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <h3 class="mb-4">
+                    <i class="fas fa-clock me-3 text-primary"></i>Operating Hours
+                </h3>
+                <div class="hours-info">
+                    <p><strong>Monday - Friday:</strong> 8:00 AM - 10:00 PM</p>
+                    <p><strong>Saturday:</strong> 8:00 AM - 8:00 PM</p>
+                    <p><strong>Sunday:</strong> 10:00 AM - 6:00 PM</p>
+                    <p><strong>Emergency:</strong> 24/7 Available</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+}

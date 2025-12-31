@@ -1,0 +1,34 @@
+@model medicare_pvt.Models.Appointment
+
+@{
+    ViewData["Title"] = "Edit Appointment";
+}
+
+<div class="container mt-4">
+    <h2>Edit Appointment</h2>
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="mb-3">
+            <label asp-for="DoctorId" class="form-label"></label>
+            <select asp-for="DoctorId" class="form-select" asp-items="ViewBag.Doctors"></select>
+        </div>
+        <div class="mb-3">
+            <label asp-for="PatientId" class="form-label"></label>
+            <select asp-for="PatientId" class="form-select" asp-items="ViewBag.Patients"></select>
+        </div>
+        <div class="mb-3">
+            <label asp-for="AppointmentDate" class="form-label"></label>
+            <input asp-for="AppointmentDate" type="datetime-local" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label asp-for="Status" class="form-label"></label>
+            <input asp-for="Status" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label asp-for="Notes" class="form-label"></label>
+            <textarea asp-for="Notes" class="form-control"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a class="btn btn-secondary" asp-action="Index">Cancel</a>
+    </form>
+</div>

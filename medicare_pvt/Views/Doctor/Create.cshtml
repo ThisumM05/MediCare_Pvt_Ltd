@@ -1,0 +1,19 @@
+@model medicare_pvt.Models.Doctor
+
+<h2>Add Doctor</h2>
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label>Name</label>
+        <input asp-for="Name" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label>Specialty</label>
+        <input asp-for="Specialty" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label>Availability</label>
+        <input asp-for="Availability" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success">Save</button>
+    <a class="btn btn-secondary" asp-action="Index">Cancel</a>
+</form>

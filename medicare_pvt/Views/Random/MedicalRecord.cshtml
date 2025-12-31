@@ -1,0 +1,44 @@
+@{
+    ViewData["Title"] = "Create Medical Record";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MediCare Pvt Ltd</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Create Medical Record for Patient</h2>
+        <form>
+            <div class="mb-3">
+                <label class="form-label">Doctor</label>
+                <input class="form-control" type="text" value="Dr. John Smith" readonly />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Patient</label>
+                <input class="form-control" type="text" value="Yasas" readonly />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Diagnosis</label>
+                <input class="form-control" type="text" value="Hypertension" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Prescription</label>
+                <input class="form-control" type="text" value="Amlodipine 5mg daily" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Notes</label>
+                <textarea class="form-control" rows="3">Monitor BP weekly</textarea>
+            </div>
+            <button type="submit" class="btn btn-success">Add Medical Record</button>
+        </form>
+    </div>
+    <footer class="text-muted text-center mt-5 mb-2">
+        &copy; 2025 - MediCare Pvt Ltd
+    </footer>
+</body>
+</html>

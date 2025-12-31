@@ -1,0 +1,281 @@
+@{
+    ViewData["Title"] = "Doctor Dashboard";
+    var userEmail = User.Identity?.Name;
+}
+
+@{
+    var doctor = ViewBag.Doctor as medicare_pvt.Models.Doctor;
+    var todayAppointments = ViewBag.TodayAppointments as List<medicare_pvt.Models.Appointment>;
+    var upcomingAppointments = ViewBag.UpcomingAppointments as List<medicare_pvt.Models.Appointment>;
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-3"><i class="fas fa-user-md"></i> Welcome, Dr. @doctor.Name!</h2>
+            <p class="text-muted">@doctor.Specialty | @doctor.Location</p>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card stat-card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-0">@ViewBag.TodayCount</h3>
+                            <p class="mb-0">Today's Appointments</p>
+                        </div>
+                        <i class="fas fa-calendar-day fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-0">@ViewBag.TotalPatients</h3>
+                            <p class="mb-0">Total Patients</p>
+                        </div>
+                        <i class="fas fa-users fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-0">@ViewBag.PendingAppointments</h3>
+                            <p class="mb-0">Pending Confirmations</p>
+                        </div>
+                        <i class="fas fa-clock fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-0">@ViewBag.AverageRating?.ToString("F1")</h3>
+                            <p class="mb-0">Average Rating</p>
+                        </div>
+                        <i class="fas fa-star fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Today's Appointments -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-calendar-check"></i> Today's Schedule</h5>
+                </div>
+                <div class="card-body">
+                    @if (todayAppointments != null && todayAppointments.Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Patient</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var appointment in todayAppointments)
+                                    {
+                                        <tr>
+                                            <td>@appointment.AppointmentTime.ToString(@"hh\:mm tt")</td>
+                                            <td>
+                                                <strong>@appointment.Patient.Name</strong><br />
+                                                <small class="text-muted">@appointment.Patient.Phone</small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-@(appointment.Status == "Confirmed" ? "success" : appointment.Status == "Pending" ? "warning" : "info")">
+                                                    @appointment.Status
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a asp-controller="Appointment" asp-action="View" asp-route-id="@appointment.Id" 
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye"></i> View
+                                                </a>
+                                                @if (appointment.Status == "Pending")
+                                                {
+                                                    <button class="btn btn-sm btn-outline-success confirm-appointment" data-id="@appointment.Id">
+                                                        <i class="fas fa-check"></i> Confirm
+                                                    </button>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center py-4">
+                            <i class="fas fa-calendar-times fa-3x mb-3 d-block"></i>
+                            No appointments scheduled for today
+                        </p>
+                    }
+                </div>
+            </div>
+
+            <!-- Upcoming Appointments -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-calendar-alt"></i> Upcoming Appointments</h5>
+                </div>
+                <div class="card-body">
+                    @if (upcomingAppointments != null && upcomingAppointments.Count > 0)
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var appointment in upcomingAppointments)
+                            {
+                                <div class="list-group-item px-0">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h6 class="mb-1">@appointment.Patient.Name</h6>
+                                            <p class="mb-1 text-muted small">
+                                                <i class="fas fa-calendar"></i> @appointment.AppointmentDate.ToString("MMM dd, yyyy")
+                                                <i class="fas fa-clock ms-2"></i> @appointment.AppointmentTime.ToString(@"hh\:mm tt")
+                                            </p>
+                                            @if (!string.IsNullOrEmpty(appointment.Notes))
+                                            {
+                                                <p class="mb-0 small"><i class="fas fa-notes-medical"></i> @appointment.Notes</p>
+                                            }
+                                        </div>
+                                        <span class="badge bg-@(appointment.Status == "Confirmed" ? "success" : "warning")">
+                                            @appointment.Status
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center py-3">No upcoming appointments</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions & Info -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-bolt"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-controller="Appointment" asp-action="Index" class="btn btn-primary">
+                            <i class="fas fa-calendar-alt"></i> All Appointments
+                        </a>
+                        <a asp-controller="Appointment" asp-action="Create" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Create Appointment
+                        </a>
+                        <a asp-controller="Feedback" asp-action="Index" class="btn btn-info">
+                            <i class="fas fa-comments"></i> View Feedback
+                        </a>
+                        <a asp-controller="Doctor" asp-action="Edit" asp-route-id="@doctor.Id" class="btn btn-outline-primary">
+                            <i class="fas fa-user-edit"></i> Edit Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Profile Summary</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong><i class="fas fa-stethoscope"></i> Specialty:</strong><br />@doctor.Specialty</p>
+                    <p><strong><i class="fas fa-certificate"></i> Qualifications:</strong><br />@doctor.Qualifications</p>
+                    <p><strong><i class="fas fa-id-card"></i> License:</strong><br />@doctor.LicenseNumber</p>
+                    <p><strong><i class="fas fa-money-bill-wave"></i> Consultation Fee:</strong><br />LKR @doctor.ConsultationFee.ToString("N2")</p>
+                    <p><strong><i class="fas fa-calendar-check"></i> Experience:</strong><br />@doctor.ExperienceYears years</p>
+                    <p><strong><i class="fas fa-map-marker-alt"></i> Location:</strong><br />@doctor.Location</p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0"><i class="fas fa-star"></i> Recent Feedback</h5>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.RecentFeedback != null && ((List<medicare_pvt.Models.Feedback>)ViewBag.RecentFeedback).Count > 0)
+                    {
+                        @foreach (var feedback in (List<medicare_pvt.Models.Feedback>)ViewBag.RecentFeedback)
+                        {
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <strong>@feedback.Patient.Name</strong>
+                                    <span class="text-warning">
+                                        @for (int i = 0; i < feedback.Rating; i++)
+                                        {
+                                            <i class="fas fa-star"></i>
+                                        }
+                                    </span>
+                                </div>
+                                <p class="mb-0 small text-muted">@feedback.Message</p>
+                            </div>
+                            <hr />
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center">No feedback yet</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('.confirm-appointment').click(function() {
+                const appointmentId = $(this).data('id');
+                if (confirm('Are you sure you want to confirm this appointment?')) {
+                    $.post('@Url.Action("UpdateStatus", "Appointment")', {
+                        id: appointmentId,
+                        status: 'Confirmed'
+                    }, function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}
+
+<style>
+    .stat-card {
+        border: none;
+        border-radius: 10px;
+        transition: transform 0.2s;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+</style>

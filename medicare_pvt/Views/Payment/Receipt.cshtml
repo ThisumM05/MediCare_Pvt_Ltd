@@ -1,0 +1,115 @@
+@model medicare_pvt.Models.Payment
+@{
+    ViewData["Title"] = "Payment Receipt";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white text-center py-4">
+                    <i class="fas fa-check-circle fa-3x mb-2"></i>
+                    <h3 class="mb-0">Payment Successful!</h3>
+                </div>
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <h2 class="text-success mb-1">LKR @Model.Amount.ToString("N2")</h2>
+                        <p class="text-muted">Transaction ID: <strong>@Model.TransactionId</strong></p>
+                    </div>
+
+                    <hr />
+
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <strong><i class="fas fa-calendar"></i> Date:</strong>
+                        </div>
+                        <div class="col-6 text-end">
+                            @Model.CreatedAt.ToString("MMM dd, yyyy hh:mm tt")
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <strong><i class="fas fa-user-md"></i> Doctor:</strong>
+                        </div>
+                        <div class="col-6 text-end">
+                            Dr. @Model.Appointment.Doctor.Name
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <strong><i class="fas fa-user"></i> Patient:</strong>
+                        </div>
+                        <div class="col-6 text-end">
+                            @Model.Patient.Name
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <strong><i class="fas fa-credit-card"></i> Payment Method:</strong>
+                        </div>
+                        <div class="col-6 text-end">
+                            @Model.PaymentMethod
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.PaymentGateway))
+                    {
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <strong><i class="fas fa-university"></i> Gateway:</strong>
+                            </div>
+                            <div class="col-6 text-end">
+                                @Model.PaymentGateway
+                            </div>
+                        </div>
+                    }
+
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <strong><i class="fas fa-check-circle"></i> Status:</strong>
+                        </div>
+                        <div class="col-6 text-end">
+                            <span class="badge bg-success">@Model.Status</span>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <div class="alert alert-info mt-3">
+                            <strong><i class="fas fa-info-circle"></i> Description:</strong><br />
+                            @Model.Description
+                        </div>
+                    }
+
+                    <hr />
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+                        <button onclick="window.print()" class="btn btn-outline-primary">
+                            <i class="fas fa-print"></i> Print Receipt
+                        </button>
+                        <a asp-action="Index" class="btn btn-primary">
+                            <i class="fas fa-list"></i> View All Payments
+                        </a>
+                        <a asp-controller="Appointment" asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="fas fa-calendar-alt"></i> My Appointments
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer text-center text-muted">
+                    <small>Thank you for your payment. Keep this receipt for your records.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @@media print {
+        .btn, .card-footer {
+            display: none;
+        }
+    }
+</style>

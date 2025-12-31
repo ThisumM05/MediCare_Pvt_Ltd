@@ -1,0 +1,33 @@
+@model medicare_pvt.Models.Appointment
+
+@{
+    ViewData["Title"] = "Delete Appointment";
+}
+
+<div class="container mt-4">
+    <h2>Delete Appointment</h2>
+    <div class="alert alert-warning">
+        Are you sure you want to delete this appointment?
+    </div>
+    <dl class="row">
+        <dt class="col-sm-4">Doctor</dt>
+        <dd class="col-sm-8">@Model.Doctor?.Name</dd>
+
+        <dt class="col-sm-4">Patient</dt>
+        <dd class="col-sm-8">@Model.Patient?.Name</dd>
+
+        <dt class="col-sm-4">Date & Time</dt>
+        <dd class="col-sm-8">@Model.AppointmentDate.ToString("yyyy-MM-dd HH:mm")</dd>
+
+        <dt class="col-sm-4">Status</dt>
+        <dd class="col-sm-8">@Model.Status</dd>
+
+        <dt class="col-sm-4">Notes</dt>
+        <dd class="col-sm-8">@Model.Notes</dd>
+    </dl>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a class="btn btn-secondary" asp-action="Index">Cancel</a>
+    </form>
+</div>

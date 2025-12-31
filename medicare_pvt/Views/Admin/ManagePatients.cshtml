@@ -1,0 +1,191 @@
+@model List<medicare_pvt.Models.Patient>
+@{
+    ViewData["Title"] = "Manage Patients";
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-3"><i class="fas fa-users"></i> Manage Patients</h2>
+            <p class="text-muted">View and manage all registered patients</p>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" name="search" placeholder="Search by name, email, or phone" value="@ViewBag.Search">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" name="bloodType">
+                        <option value="">All Blood Types</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" name="status">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                    <a asp-action="ManagePatients" class="btn btn-outline-secondary">
+                        <i class="fas fa-redo"></i> Reset
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card stat-card bg-primary text-white">
+                <div class="card-body">
+                    <h3 class="mb-0">@Model.Count</h3>
+                    <p class="mb-0">Total Patients</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card bg-success text-white">
+                <div class="card-body">
+                    <h3 class="mb-0">@Model.Count(p => p.IsActive)</h3>
+                    <p class="mb-0">Active Patients</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card bg-warning text-white">
+                <div class="card-body">
+                    <h3 class="mb-0">@ViewBag.AppointmentsToday</h3>
+                    <p class="mb-0">Appointments Today</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card bg-info text-white">
+                <div class="card-body">
+                    <h3 class="mb-0">@Model.Count(p => p.CreatedAt.Date == DateTime.Today)</h3>
+                    <p class="mb-0">New Today</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Patients Table -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-white py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">All Patients</h5>
+                <a asp-controller="Patient" asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add New Patient
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Blood Type</th>
+                                <th>Registered</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var patient in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@patient.Name</strong>
+                                    </td>
+                                    <td>@patient.Email</td>
+                                    <td>@patient.Phone</td>
+                                    <td>
+                                        <span class="badge bg-danger">@patient.BloodType</span>
+                                    </td>
+                                    <td>@patient.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                    <td>
+                                        <span class="badge bg-@(patient.IsActive ? "success" : "secondary")">
+                                            @(patient.IsActive ? "Active" : "Inactive")
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-controller="Patient" asp-action="View" asp-route-id="@patient.Id" 
+                                               class="btn btn-outline-primary" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a asp-controller="Patient" asp-action="Edit" asp-route-id="@patient.Id" 
+                                               class="btn btn-outline-warning" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            @if (patient.IsActive)
+                                            {
+                                                <button class="btn btn-outline-danger deactivate-patient" data-id="@patient.Id" title="Deactivate">
+                                                    <i class="fas fa-ban"></i>
+                                                </button>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <p class="text-muted text-center py-4">
+                    <i class="fas fa-users fa-3x mb-3 d-block"></i>
+                    No patients found
+                </p>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('.deactivate-patient').click(function() {
+                const patientId = $(this).data('id');
+                if (confirm('Are you sure you want to deactivate this patient?')) {
+                    $.post('@Url.Action("Delete", "Patient")', {
+                        id: patientId,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    }, function(response) {
+                        location.reload();
+                    });
+                }
+            });
+        });
+    </script>
+}
+
+<style>
+    .stat-card {
+        border: none;
+        border-radius: 10px;
+    }
+</style>

@@ -1,0 +1,142 @@
+@model medicare_pvt.Models.Feedback
+@{
+    ViewData["Title"] = "Submit Feedback";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-star"></i> Submit Feedback</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        <div class="mb-3">
+                            <label asp-for="DoctorId" class="form-label">Select Doctor <span class="text-danger">*</span></label>
+                            <select asp-for="DoctorId" class="form-select" required>
+                                <option value="">-- Choose a Doctor --</option>
+                                @if (ViewBag.Doctors != null)
+                                {
+                                    @foreach (var doctor in (List<medicare_pvt.Models.Doctor>)ViewBag.Doctors)
+                                    {
+                                        <option value="@doctor.Id" selected="@(ViewBag.SelectedDoctorId != null && ViewBag.SelectedDoctorId == doctor.Id)">
+                                            Dr. @doctor.Name - @doctor.Specialty
+                                        </option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="DoctorId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="AppointmentId" class="form-label">Related Appointment (Optional)</label>
+                            <select asp-for="AppointmentId" class="form-select">
+                                <option value="">-- Select an appointment --</option>
+                                @if (ViewBag.PatientAppointments != null)
+                                {
+                                    @foreach (var appointment in (List<medicare_pvt.Models.Appointment>)ViewBag.PatientAppointments)
+                                    {
+                                        <option value="@appointment.Id">
+                                            @appointment.Doctor.Name - @appointment.AppointmentDate.ToString("MMM dd, yyyy")
+                                        </option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Rating" class="form-label">Rating <span class="text-danger">*</span></label>
+                            <div class="rating-stars">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <input type="radio" name="Rating" value="@i" id="star@i" required />
+                                    <label for="star@i"><i class="fas fa-star"></i></label>
+                                }
+                            </div>
+                            <span asp-validation-for="Rating" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label">Title (Optional)</label>
+                            <input asp-for="Title" class="form-control" placeholder="e.g., Excellent Service" maxlength="100" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Message" class="form-label">Your Feedback <span class="text-danger">*</span></label>
+                            <textarea asp-for="Message" class="form-control" rows="5" required 
+                                      placeholder="Share your experience with this doctor..." maxlength="1000"></textarea>
+                            <span asp-validation-for="Message" class="text-danger"></span>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> Your feedback will be reviewed by administrators before being published.
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Submit Feedback
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            $('.rating-stars input').change(function() {
+                var rating = $(this).val();
+                $('.rating-stars label').removeClass('active');
+                for (var i = 1; i <= rating; i++) {
+                    $('#star' + i).next('label').addClass('active');
+                }
+            });
+
+            $('#DoctorId').change(function() {
+                var doctorId = $(this).val();
+                if (doctorId) {
+                    // Filter appointments by selected doctor
+                    $('#AppointmentId option').each(function() {
+                        var optionText = $(this).text();
+                        if ($(this).val() && !optionText.includes($('#DoctorId option:selected').text().replace('Dr. ', '').split(' - ')[0])) {
+                            $(this).hide();
+                        } else {
+                            $(this).show();
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}
+
+<style>
+    .rating-stars {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        gap: 5px;
+    }
+    .rating-stars input {
+        display: none;
+    }
+    .rating-stars label {
+        cursor: pointer;
+        font-size: 2rem;
+        color: #ddd;
+    }
+    .rating-stars label:hover,
+    .rating-stars label:hover ~ label,
+    .rating-stars input:checked ~ label,
+    .rating-stars label.active {
+        color: #ffc107;
+    }
+</style>

@@ -1,0 +1,37 @@
+@* @model IEnumerable<medicare_pvt.Models.Doctor>
+@{
+    ViewData["Title"] = "Manage Doctors";
+}
+<div class="container mt-4">
+    <h2>Doctors</h2>
+    <a class="btn btn-primary mb-3" asp-action="AddDoctor">Add Doctor</a>
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Name</th>
+                <th>Specialty</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>Fee</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var doctor in Model)
+            {
+                <tr>
+                    <td>@doctor.Name</td>
+                    <td>@doctor.Specialty</td>
+                    <td>@doctor.Email</td>
+                    <td>@doctor.Phone</td>
+                    <td>@doctor.Fee</td>
+                    <td>
+                        <a class="btn btn-sm btn-info" asp-action="EditDoctor" asp-route-id="@doctor.Id">Edit</a>
+                        <a class="btn btn-sm btn-danger" asp-action="DeleteDoctor" asp-route-id="@doctor.Id"
+                            onclick="return confirm('Delete this doctor?');">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div> *@

@@ -1,0 +1,92 @@
+DROP DATABASE IF EXISTS medicare_db;
+
+CREATE DATABASE medicare_db;
+
+USE medicare_db;
+
+CREATE TABLE doctor (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    specialty VARCHAR(100) NOT NULL,
+    availability VARCHAR(100)
+);
+
+CREATE TABLE patient (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(20),
+    birthdate DATE,
+    address VARCHAR(255)
+);
+
+CREATE TABLE appointments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    doctorId INT NOT NULL,
+    patientId INT NOT NULL,
+    appointmentdate DATETIME NOT NULL,
+    status VARCHAR(50),
+    notes TEXT,
+    FOREIGN KEY (doctorid) REFERENCES doctor(id),
+    FOREIGN KEY (patientid) REFERENCES patient(id)
+);
+
+CREATE TABLE DoctorPatient (
+    DoctorId INT NOT NULL,
+    PatientId INT NOT NULL,
+    PRIMARY KEY (DoctorId, PatientId),
+    FOREIGN KEY (DoctorId) REFERENCES doctor(id),
+    FOREIGN KEY (PatientId) REFERENCES patient(id)
+);
+
+
+CREATE TABLE admin (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    email VARCHAR(100) UNIQUE
+);
+
+
+
+
+INSERT INTO doctor (name, specialty, availability)
+VALUES 
+('Dr. Anjali Fernando', 'Dermatology', 'Monday, Wednesday, Friday'),
+('Dr. Malik Perera', 'Cardiology', 'Tuesday, Thursday'),
+('Dr. Shehani Silva', 'Pediatrics', 'Monday, Thursday'),
+('Dr. Ravi Gunawardena', 'General Medicine', 'Monday-Friday'),
+('Dr. Shamila Jayawardena', 'Endocrinology', 'Tuesday, Friday'),
+('Dr. Vishal Wijesinghe', 'Orthopedics', 'Wednesday, Saturday'),
+('Dr. Lihini Pathirana', 'Neurology', 'Monday, Wednesday');
+
+INSERT INTO patient (name, email, phone, birthdate, address)
+VALUES 
+('Nuwan Jayasuriya', 'nuwan@email.com', '0771234567', '1990-04-15', 'Colombo'),
+('Amaya Senanayake', 'amaya@email.com', '0769876543', '1985-09-24', 'Kandy'),
+('Roshan Silva', 'roshan@email.com', '0713322334', '1978-02-10', 'Galle');
+
+INSERT INTO admin (username, password_hash, email)
+VALUES 
+('admin1', 'hashedpassword1', 'admin1@medicare.lk'),
+('admin2', 'hashedpassword2', 'admin2@medicare.lk');
+
+INSERT INTO appointments (doctorid, patientid, appointmentdate, status, notes)
+VALUES
+(1, 1, '2025-09-01 09:30:00', 'Booked', 'First consultation for skin issues'),
+(2, 2, '2025-09-02 11:00:00', 'Completed', 'Cardiology follow-up'),
+(3, 3, '2025-09-03 15:00:00', 'Cancelled', 'Patient unable to attend'),
+(4, 1, '2025-09-04 10:15:00', 'Booked', 'Routine checkup');
+
+DESC DOCTOR;
+DESC PATIENT;
+DESC APPOINMENT;
+DESC ADMIN;
+DESC DOCTORPATIENT;
+
+
+SELECT * FROM DOCTOR;
+SELECT * FROM PATIENT;
+SELECT * FROM APPOINMENT;
+SELECT * FROM ADMIN;
+SELECT * FROM DOCTORPATIENT;

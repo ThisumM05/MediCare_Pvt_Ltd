@@ -1,0 +1,279 @@
+@model medicare_pvt.Controllers.AppointmentBookingViewModel
+@{
+    ViewData["Title"] = "Book Appointment";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-success text-white py-3">
+                    <h3 class="mb-0 text-center">
+                        <i class="fas fa-calendar-plus me-2"></i>
+                        Book Your Appointment
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                {
+                                    <li>@error.ErrorMessage</li>
+                                }
+                            </ul>
+                        </div>
+                    }
+
+                    <form method="post" asp-action="Book" id="appointmentForm">
+                        <!-- Doctor Selection -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <label asp-for="DoctorId" class="form-label fw-bold">
+                                    <i class="fas fa-user-md me-2 text-success"></i>
+                                    Select Doctor
+                                </label>
+                                <select asp-for="DoctorId" class="form-select form-select-lg" required id="doctorSelect">
+                                    <option value="">Choose a doctor...</option>
+                                    @foreach (var doctor in ViewBag.Doctors as SelectList)
+                                    {
+                                        <option value="@doctor.Value" selected="@doctor.Selected">
+                                            @doctor.Text
+                                        </option>
+                                    }
+                                </select>
+                                <span asp-validation-for="DoctorId" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Selected Doctor Info -->
+                        <div id="doctorInfo" style="display: none;" class="mb-4">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="text-primary mb-3">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        Doctor Information
+                                    </h5>
+                                    <div id="doctorDetails"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Date Selection -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="AppointmentDate" class="form-label fw-bold">
+                                    <i class="fas fa-calendar me-2 text-primary"></i>
+                                    Appointment Date
+                                </label>
+                                <input asp-for="AppointmentDate" 
+                                       class="form-control form-control-lg" 
+                                       type="date" 
+                                       required 
+                                       id="appointmentDate"
+                                       min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")">
+                                <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="AppointmentTime" class="form-label fw-bold">
+                                    <i class="fas fa-clock me-2 text-info"></i>
+                                    Appointment Time
+                                </label>
+                                <select asp-for="AppointmentTime" 
+                                        class="form-select form-select-lg" 
+                                        required 
+                                        id="appointmentTime">
+                                    <option value="">Select time...</option>
+                                </select>
+                                <span asp-validation-for="AppointmentTime" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Time Slots Display -->
+                        <div id="timeSlotsContainer" style="display: none;" class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-clock me-2 text-warning"></i>
+                                Available Time Slots
+                            </label>
+                            <div id="timeSlots" class="d-flex flex-wrap gap-2">
+                                <!-- Time slots will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="mb-4">
+                            <label asp-for="Notes" class="form-label fw-bold">
+                                <i class="fas fa-sticky-note me-2 text-secondary"></i>
+                                Additional Notes (Optional)
+                            </label>
+                            <textarea asp-for="Notes" 
+                                      class="form-control" 
+                                      rows="3" 
+                                      placeholder="Please describe your symptoms or reason for visit..."></textarea>
+                            <span asp-validation-for="Notes" class="text-danger"></span>
+                        </div>
+
+                        <!-- Important Information -->
+                        <div class="alert alert-info">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Important Information:
+                            </h6>
+                            <ul class="mb-0">
+                                <li>Appointments must be booked at least 1 day in advance</li>
+                                <li>Please arrive 15 minutes before your scheduled time</li>
+                                <li>Bring your ID and any relevant medical records</li>
+                                <li>You can cancel or reschedule up to 2 hours before the appointment</li>
+                            </ul>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <button type="submit" class="btn btn-success btn-lg px-5">
+                                <i class="fas fa-calendar-check me-2"></i>
+                                Book Appointment
+                            </button>
+                            <a href="@Url.Action("Index", "Doctor")" class="btn btn-outline-secondary btn-lg px-5">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Back to Doctors
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            const doctorSelect = $('#doctorSelect');
+            const appointmentDate = $('#appointmentDate');
+            const appointmentTime = $('#appointmentTime');
+            const doctorInfo = $('#doctorInfo');
+            const timeSlotsContainer = $('#timeSlotsContainer');
+            const timeSlots = $('#timeSlots');
+
+            // Handle doctor selection
+            doctorSelect.on('change', function() {
+                const doctorId = $(this).val();
+                if (doctorId) {
+                    loadDoctorInfo(doctorId);
+                    if (appointmentDate.val()) {
+                        loadAvailableSlots(doctorId, appointmentDate.val());
+                    }
+                } else {
+                    doctorInfo.hide();
+                    timeSlotsContainer.hide();
+                }
+            });
+
+            // Handle date change
+            appointmentDate.on('change', function() {
+                const doctorId = doctorSelect.val();
+                const date = $(this).val();
+                if (doctorId && date) {
+                    loadAvailableSlots(doctorId, date);
+                }
+            });
+
+            // Load doctor information
+            function loadDoctorInfo(doctorId) {
+                // This would typically be an AJAX call to get doctor details
+                // For now, we'll show basic info
+                const doctorName = doctorSelect.find('option:selected').text();
+                $('#doctorDetails').html(`
+                    <p><strong>Doctor:</strong> ${doctorName}</p>
+                    <p><strong>Consultation Fee:</strong> ₹500</p>
+                    <p><strong>Location:</strong> MediCare Medical Center</p>
+                `);
+                doctorInfo.show();
+            }
+
+            // Load available time slots
+            function loadAvailableSlots(doctorId, date) {
+                $.get('@Url.Action("GetAvailableSlots")', {
+                    doctorId: doctorId,
+                    date: date
+                }, function(slots) {
+                    timeSlots.empty();
+                    appointmentTime.empty().append('<option value="">Select time...</option>');
+                    
+                    if (slots.length > 0) {
+                        slots.forEach(function(slot) {
+                            const timeButton = `
+                                <button type="button" class="btn btn-outline-primary time-slot-btn" 
+                                        data-time="${slot}">
+                                    ${formatTime(slot)}
+                                </button>`;
+                            timeSlots.append(timeButton);
+                            
+                            appointmentTime.append(`<option value="${slot}">${formatTime(slot)}</option>`);
+                        });
+                        timeSlotsContainer.show();
+                    } else {
+                        timeSlots.append('<p class="text-muted">No available slots for this date.</p>');
+                        timeSlotsContainer.show();
+                    }
+                }).fail(function() {
+                    alert('Error loading available time slots. Please try again.');
+                });
+            }
+
+            // Handle time slot button clicks
+            $(document).on('click', '.time-slot-btn', function() {
+                $('.time-slot-btn').removeClass('btn-success').addClass('btn-outline-primary');
+                $(this).removeClass('btn-outline-primary').addClass('btn-success');
+                
+                const selectedTime = $(this).data('time');
+                appointmentTime.val(selectedTime);
+            });
+
+            // Format time for display
+            function formatTime(timeString) {
+                const [hours, minutes] = timeString.split(':');
+                const hour = parseInt(hours);
+                const ampm = hour >= 12 ? 'PM' : 'AM';
+                const displayHour = hour % 12 || 12;
+                return `${displayHour}:${minutes} ${ampm}`;
+            }
+
+            // Initialize if doctor is pre-selected
+            if (doctorSelect.val()) {
+                loadDoctorInfo(doctorSelect.val());
+            }
+
+            // Form validation
+            $('#appointmentForm').on('submit', function(e) {
+                if (!appointmentTime.val()) {
+                    e.preventDefault();
+                    alert('Please select an appointment time.');
+                    return false;
+                }
+            });
+        });
+    </script>
+
+    <style>
+        .time-slot-btn {
+            min-width: 100px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #198754;
+            box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+        }
+        
+        .card {
+            transition: all 0.3s ease;
+        }
+        
+        .alert {
+            border: none;
+            border-radius: 10px;
+        }
+    </style>
+}
